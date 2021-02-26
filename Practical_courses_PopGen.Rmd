@@ -12,12 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 #   Estimation of the genomic differentiation
 ##    Allele frequency spectrum
 
- ```{r }
+ ```
  data=read.table('RC/S155.txt')
  colnames(data) = c("GA","GB","TA","TB")
  Gfreq = data$GB/(data$GA+data$GB)
- hist(Gfreq, breaks = 10)
-
+ hist(Gfreq, breaks = 10, main="B allele frequency distribution")
  ```
  ##Pairwise-FST
  
