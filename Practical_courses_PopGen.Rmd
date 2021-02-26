@@ -1,0 +1,48 @@
+---
+title: "Practical courses"
+author: "Amin Madoui and Romuald Laso-Jadart"
+date: "26 février 2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#   Estimation of the genomic differentiation1
+##    Allele frequency spectrum
+
+ ```{r }
+ data=read.table( 'allele.txt' )
+ hist(data$V1, breaks = 10)
+ 
+
+ ```
+ ##Pairwise-FST
+ ##Isolation by currents2    
+ # Detection of loci under natural selection
+ ##FSToutliers method
+ ##pcadapt method
+ #Population-scale allele expression
+ ##Comparison of allele expression to genomic abundance
+ ##Detection of allele-specific expression
+ ##Link between natural selection and allele specific ex-pression
+ #Reference-free approach and metavariant species
+ ##Genomic differentiation of MVS
+ ##Role of the environmental factors
+ ##Variance partitioning of environmental factors
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
