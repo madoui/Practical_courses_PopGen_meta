@@ -13,8 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ##    Allele frequency spectrum
 
  ```{r }
- data=read.table( 'RC/S155.txt' )
- hist(data$V1, breaks = 10)
+ data=read.table('RC/S155.txt')
+ colnames(data) = c("GA","GB","TA","TB")
+ Gfreq = data$GB/(data$GA+data$GB)
+ hist(Gfreq, breaks = 10)
 
  ```
  ##Pairwise-FST
