@@ -9,16 +9,17 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#   Estimation of the genomic differentiation1
+#   Estimation of the genomic differentiation
 ##    Allele frequency spectrum
 
  ```{r }
- data=read.table( 'allele.txt' )
+ data=read.table( 'RC/S155.txt' )
  hist(data$V1, breaks = 10)
- 
 
  ```
  ##Pairwise-FST
+ 
+ 
  ##Isolation by currents2    
  # Detection of loci under natural selection
  ##FSToutliers method
