@@ -16,15 +16,23 @@ knitr::opts_chunk$set(echo = TRUE)
 ##    Allele frequency spectrum
 
  ```{r}
- data=read.table('RC/S155.txt')
+ data=read.table('data/RC/S155.txt')
  colnames(data) = c("GA","GB","TA","TB")
  Gfreq = data$GB/(data$GA+data$GB)
  hist(Gfreq, breaks = 10, main="B allele frequency distribution")
  ```
  ##Pairwise-FST
+ ```{r}
+ source ("popgene_functions.R")
  
+ freq = read.table("data/Genomic_frequencies.txt")
+ colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")
+ pairwiseFST = pwFst(freq)
  
- ##Isolation by currents2    
+plotFST(pairwiseFST)
+ ```
+ 
+ ##Isolation by currents   
  # Detection of loci under natural selection
  ##FSToutliers method
  ##pcadapt method
