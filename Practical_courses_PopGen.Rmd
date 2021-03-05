@@ -1,8 +1,11 @@
 ---
 title: "Practical courses"
 author: "Amin Madoui and Romuald Laso-Jadart"
-date: "26 février 2021"
-output: pdf_document
+date: "April 2021"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #   Estimation of the genomic differentiation
 ##    Allele frequency spectrum
 
- ```
+ ```{r}
  data=read.table('RC/S155.txt')
  colnames(data) = c("GA","GB","TA","TB")
  Gfreq = data$GB/(data$GA+data$GB)
