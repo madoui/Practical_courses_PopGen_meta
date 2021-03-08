@@ -23,18 +23,45 @@ knitr::opts_chunk$set(echo = TRUE)
  ```
  ##Pairwise-FST
  ```{r}
- source ("popgene_functions.R")
+source ("popgene_functions.R")
  
- freq = read.table("data/Genomic_frequencies.txt")
- colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")
- pairwiseFST = pwFst(freq)
+freq = read.table("data/Genomic_frequencies.txt")
+colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")
+
+pairwiseFST = pwFst(freq)
+
+print(pairwiseFST)
  
 plotFST(pairwiseFST)
  ```
  
  ##Isolation by currents   
+ 
+ 
  # Detection of loci under natural selection
- ##FSToutliers method
+ 
+ ##FST outliers method through LK
+  ```{r}
+source ("popgene_functions.R")
+ 
+freq = read.table("data/Genomic_frequencies.txt")
+colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")
+
+LK = LK(freq)
+head( LK)
+
+h = hist ( LK$LK , plot = F, breaks = 50 )
+n_pop = ncol(freq)-1
+max1 = max ( h$density )
+max2 = max ( dchisq (seq(0:max(LK$LK)), n_pop ))
+Max = max (max1, max2) + 0.1
+hist ( LK$LK, freq = F, xlab = "LK" , ylim = c(0,Max) , breaks = 50 , main = "")
+x <- NULL; rm(x)
+
+# add the neutral evolution
+curve ( dchisq( x, n_pop ) , lwd=3, col="orange" , add=T )
+ ```
+ 
  ##pcadapt method
  #Population-scale allele expression
  ##Comparison of allele expression to genomic abundance

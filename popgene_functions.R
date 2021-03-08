@@ -66,3 +66,15 @@ plotFST<-function(pairewiseFST){
   plot(p)
 }
 
+LK <- function (p){
+  n = ncol(p)
+  fst = fst(p)
+  lk = (n-1)*fst/mean(fst)
+  pv = pchisq (q = lk, df = n-1, lower.tail = F)
+  qv = p.adjust (pv, method = "BH")
+  d = cbind( names(fst), fst, lk, pv,  qv )
+  colnames(d) = c( "varID", "Fst", "LK", "p_value","q_value" )
+  d = as.data.frame(d)
+  d = as.data.frame(apply(d, 2, function(x) as.numeric(as.character(x))))
+  return ( d )
+}
