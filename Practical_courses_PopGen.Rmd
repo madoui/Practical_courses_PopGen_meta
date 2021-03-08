@@ -52,17 +52,13 @@ head( LK)
 
 h = hist ( LK$LK , plot = F, breaks = 50 )
 n_pop = ncol(freq)-1
-max1 = max ( h$density )
-max2 = max ( dchisq (seq(0:max(LK$LK)), n_pop ))
-Max = max (max1, max2) + 0.1
-hist ( LK$LK, freq = F, xlab = "LK" , ylim = c(0,Max) , breaks = 50 , main = "")
-x <- NULL; rm(x)
+hist ( LK$LK, freq = F, xlab = "LK" , breaks = 50 , main = "LK distribution")
 
 # add the neutral evolution
 curve ( dchisq( x, n_pop ) , lwd=3, col="orange" , add=T )
 
 # selected loci with high LK value
-selection_LK = LK[LK$q_value<0.05,]
+selection_LK = LK[LK$q_value<0.1,]
 dim(selection_LK)
  ```
  
@@ -70,8 +66,32 @@ dim(selection_LK)
  
  #Population-scale allele expression
  ##Comparison of allele expression to genomic abundance
- ##Detection of allele-specific expression
- ##Link between natural selection and allele specific ex-pression
+ 
+  ```{r}
+ data=read.table('data/RC/S206.txt')
+ colnames(data) = c("GA","GB","TA","TB")
+ Gfreq = data$GB/(data$GA+data$GB)
+ Tfreq = data$TB/(data$TA+data$TB)
+ plot(Gfreq,Tfreq)
+ summary(lm(Tfreq~Gfreq-1))
+ ```
+ ##Detection of allele-specific expression (ASE)
+ 
+ ```{r}
+  Fisher_pvalue = apply(data,1,function (x) fisher.test (matrix(x, nrow = 2))$p.value)
+  Fisher_qvalue = p.adjust(Fisher_pvalue, method="BH")
+ ```
+ ##Link between natural selection and allele specific expression
+ 
+  ```{r}
+  selection_ASE_S206 = LK[LK$q_value<0.1 &  Fisher_qvalue < 0.1,] 
+  dim(selection_ASE_S206)
+  phyper(nrow(selection_ASE_S206), 
+        nrow(LK[LK$q_value<0.1,]),
+        nrow(LK)-nrow(LK[LK$q_value<0.1,]),
+        length(Fisher_qvalue[Fisher_qvalue<0.1] ))
+  
+ ```
  #Reference-free approach and metavariant species
  ##Genomic differentiation of MVS
  ##Role of the environmental factors
