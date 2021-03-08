@@ -60,9 +60,14 @@ x <- NULL; rm(x)
 
 # add the neutral evolution
 curve ( dchisq( x, n_pop ) , lwd=3, col="orange" , add=T )
+
+# selected loci with high LK value
+selection_LK = LK[LK$q_value<0.05,]
+dim(selection_LK)
  ```
  
  ##pcadapt method
+ 
  #Population-scale allele expression
  ##Comparison of allele expression to genomic abundance
  ##Detection of allele-specific expression
@@ -73,16 +78,4 @@ curve ( dchisq( x, n_pop ) , lwd=3, col="orange" , add=T )
  ##Variance partitioning of environmental factors
 
 
-```{r cars}
-summary(cars)
-```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
