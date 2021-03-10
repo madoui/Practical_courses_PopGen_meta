@@ -15,87 +15,150 @@ knitr::opts_chunk$set(echo = TRUE)
 #   Estimation of the genomic differentiation
 ##    Allele frequency spectrum
 
- ```{r}
- data=read.table('data/RC/S155.txt')
- colnames(data) = c("GA","GB","TA","TB")
- Gfreq = data$GB/(data$GA+data$GB)
- hist(Gfreq, breaks = 10, main="B allele frequency distribution")
- ```
- ##Pairwise-FST
- ```{r}
-source ("popgene_functions.R")
+ ```{r }
+ data=read.table('data/RC/S155.txt') 
  
-freq = read.table("data/Genomic_frequencies.txt")
-colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")
-
-pairwiseFST = pwFst(freq)
-
-print(pairwiseFST)
+ colnames(data) = c("GA","GB","TA","TB") 
  
-plotFST(pairwiseFST)
+ Gfreq = data$GB/(data$GA+data$GB)  
+ 
+ hist(Gfreq, breaks = 10, main="B allele frequency distribution")  
  ```
  
- ##Isolation by currents   
+ ##  Pairwise-FST
  
+ ```{r }
+source ("popgene_functions.R")  
  
+freq = read.table("data/Genomic_frequencies.txt")  
+
+colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")  
+
+pairwiseFST = pwFst(freq)  
+
+print(pairwiseFST)  
+ 
+plotFST(pairwiseFST)  
+ ```
+ 
+ ## Isolation by distances
+ 
+  ```{r }
+ library(vegan)
+ 
+ euclidians = read.table("data/euclidians.txt", row.names=1,header = TRUE)
+ 
+ res.mantel = mantel(vegdist(pairwiseFST),vegdist(euclidians),
+                      permutations = 10000,na.rm = TRUE)
+  ```
+  
  # Detection of loci under natural selection
  
- ##FST outliers method through LK
-  ```{r}
-source ("popgene_functions.R")
+ ## The LK or FST outliers method 
  
-freq = read.table("data/Genomic_frequencies.txt")
-colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")
+  ```{r }
+source ("popgene_functions.R")  
+ 
+freq = read.table("data/Genomic_frequencies.txt")  
 
-LK = LK(freq)
-head( LK)
+colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")  
 
-h = hist ( LK$LK , plot = F, breaks = 50 )
-n_pop = ncol(freq)-1
-hist ( LK$LK, freq = F, xlab = "LK" , breaks = 50 , main = "LK distribution")
+LK = LK(freq)  
 
-# add the neutral evolution
-curve ( dchisq( x, n_pop ) , lwd=3, col="orange" , add=T )
+head( LK)  
 
-# selected loci with high LK value
-selection_LK = LK[LK$q_value<0.1,]
-dim(selection_LK)
+h = hist ( LK$LK , plot = F, breaks = 50 )  
+
+n_pop = ncol(freq)-1  
+
+hist ( LK$LK, freq = F, xlab = "LK" , breaks = 50 , main = "LK distribution")  
+
+# add the neutral evolution  
+
+curve ( dchisq( x, n_pop ) , lwd=3, col="orange" , add=T )  
+
+# selected loci with high LK value 
+
+selection_LK = LK[LK$q_value<0.1,]  
+
+dim(selection_LK)  
  ```
  
- ##pcadapt method
+ ## pcadapt method
+ ```{r}
+library(pcadapt)
  
- #Population-scale allele expression
- ##Comparison of allele expression to genomic abundance
- 
-  ```{r}
- data=read.table('data/RC/S206.txt')
- colnames(data) = c("GA","GB","TA","TB")
- Gfreq = data$GB/(data$GA+data$GB)
- Tfreq = data$TB/(data$TA+data$TB)
- plot(Gfreq,Tfreq)
- summary(lm(Tfreq~Gfreq-1))
+freq = read.table("data/Genomic_frequencies.txt")  
+
+colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")  
+
+freq_forPCA = read.pcadapt(freq, type = "pool")
+
+pcadapt_result <- pcadapt(t(freq_forPCA), K = 4)
+
+q_values = p.adjust(pcadapt_result$pvalues, method = "BH")
+
+freq$pcadapt_qval = q_values
+
+freq[is.na(freq)] <- 1
+
+dim(freq[freq$pcadapt_qval<0.1,])
+
+freq$LK_qval = LK$q_value
+
+dim(freq[freq$pcadapt_qval<0.1 & freq$LK_qval<0.1,])
+
  ```
- ##Detection of allele-specific expression (ASE)
+ 
+ # Population-scale allele expression  
+ 
+ ## Comparison of allele expression to genomic abundance
+ 
+  ```{r }
+ data=read.table('data/RC/S206.txt') 
+ 
+ colnames(data) = c("GA","GB","TA","TB")  
+ 
+ Gfreq = data$GB/(data$GA+data$GB)  
+ 
+ Tfreq = data$TB/(data$TA+data$TB) 
+ 
+ plot(Gfreq,Tfreq)  
+ 
+ summary(lm(Tfreq~Gfreq-1))  
+ ```
+ 
+ ## Detection of allele-specific expression (ASE)
  
  ```{r}
-  Fisher_pvalue = apply(data,1,function (x) fisher.test (matrix(x, nrow = 2))$p.value)
-  Fisher_qvalue = p.adjust(Fisher_pvalue, method="BH")
+  Fisher_pvalue = apply(data,1,function (x) fisher.test (matrix(x, nrow = 2))$p.value) 
+  
+  Fisher_qvalue = p.adjust(Fisher_pvalue, method="BH")  
  ```
- ##Link between natural selection and allele specific expression
+ 
+ ## Link between natural selection and allele specific expression
  
   ```{r}
-  selection_ASE_S206 = LK[LK$q_value<0.1 &  Fisher_qvalue < 0.1,] 
+  cutoff = 0.01
+  
+  selection_ASE_S206 = freq[freq$pcadapt_qval<cutoff &  Fisher_qvalue < cutoff,]   
+  
   dim(selection_ASE_S206)
-  phyper(nrow(selection_ASE_S206), 
-        nrow(LK[LK$q_value<0.1,]),
-        nrow(LK)-nrow(LK[LK$q_value<0.1,]),
-        length(Fisher_qvalue[Fisher_qvalue<0.1] ))
+  
+  phyper(nrow(selection_ASE_S206),   
+        nrow(freq[freq$pcadapt_qval<cutoff,]),  
+        nrow(freq)-nrow(freq[freq$pcadapt_qval<cutoff,]),  
+        length(Fisher_qvalue[Fisher_qvalue<cutoff] ))  
   
  ```
- #Reference-free approach and metavariant species
- ##Genomic differentiation of MVS
- ##Role of the environmental factors
- ##Variance partitioning of environmental factors
+ 
+ # Reference-free approach and metavariant species
+ 
+ ## Genomic differentiation of MVS
+ 
+ ## Role of the environmental factors
+ 
+ ## Variance partitioning of environmental factors
 
 
 
