@@ -43,16 +43,27 @@ plotFST(pairwiseFST)
  
  ## Isolation by distances
  
-  ```{r }
- library(vegan)
+```{r }
+euclideans = read.table("data/Euclidean_Arctic.txt", row.names=1,header = TRUE)
  
- euclideans = read.table("data/Euclidean_Arctic.txt", row.names=1,header = TRUE)
+#MantelPlot(euclideans,pairwiseFST)
  
- MantelPlot(euclideans,pairwiseFST)
- 
- res.mantel = mantel(vegdist(pairwiseFST),vegdist(euclideans),
+res_mantel_euclideans = mantel(vegdist(pairwiseFST),vegdist(euclideans),
                       permutations = 10000,na.rm = TRUE)
-  ```
+
+```
+
+## ISolation by currents
+
+```{r }
+lagrangians = read.table("data/Lagrangian_Arctic.txt", row.names=1,header = TRUE)
+ 
+#MantelPlot(euclideans,pairwiseFST)
+ 
+res_mantel_euclideans = mantel(vegdist(pairwiseFST),vegdist(lagrangians),
+                      permutations = 10000,na.rm = TRUE)
+
+```
   
  # Detection of loci under natural selection
  
