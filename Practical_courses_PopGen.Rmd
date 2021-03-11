@@ -43,13 +43,12 @@ plotFST(pairwiseFST)
  
  ## Isolation by distances
  
-```{r }
+```{r}
 euclideans = read.table("data/Euclidean_Arctic.txt", row.names=1,header = TRUE)
  
 #MantelPlot(euclideans,pairwiseFST)
  
-res_mantel_euclideans = mantel(vegdist(pairwiseFST),vegdist(euclideans),
-                      permutations = 10000,na.rm = TRUE)
+res_mantel_euclideans = mantel(vegdist(pairwiseFST),vegdist(euclideans))
 
 ```
 
@@ -60,14 +59,13 @@ lagrangians = read.table("data/Lagrangian_Arctic.txt", row.names=1,header = TRUE
  
 #MantelPlot(euclideans,pairwiseFST)
  
-res_mantel_euclideans = mantel(vegdist(pairwiseFST),vegdist(lagrangians),
-                      permutations = 10000,na.rm = TRUE)
+res_mantel_lagrangians = mantel(vegdist(pairwiseFST),vegdist(lagrangians))
 
 ```
   
  # Detection of loci under natural selection
  
- ## The LK or FST outliers method 
+ ## The LK outliers method 
  
   ```{r }
 source ("popgene_functions.R")  
@@ -97,7 +95,7 @@ selection_LK = LK[LK$q_value<0.1,]
 dim(selection_LK)  
  ```
  
- ## pcadapt method
+ ## using the pcadapt package
  ```{r}
 library(pcadapt)
  
