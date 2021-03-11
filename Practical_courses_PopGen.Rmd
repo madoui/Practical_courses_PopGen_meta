@@ -32,7 +32,7 @@ source ("popgene_functions.R")
  
 freq = read.table("data/Genomic_frequencies.txt")  
 
-colnames(freq) = c("S155","S158","S178","S206","S208","S209","S210")  
+colnames(freq) = c("TARA_155","TARA_158","TARA_178","TARA_206","TARA_208","TARA_209","TARA_210")  
 
 pairwiseFST = pwFst(freq)  
 
@@ -46,9 +46,11 @@ plotFST(pairwiseFST)
   ```{r }
  library(vegan)
  
- euclidians = read.table("data/euclidians.txt", row.names=1,header = TRUE)
+ euclideans = read.table("data/Euclidean_Arctic.txt", row.names=1,header = TRUE)
  
- res.mantel = mantel(vegdist(pairwiseFST),vegdist(euclidians),
+ MantelPlot(euclideans,pairwiseFST)
+ 
+ res.mantel = mantel(vegdist(pairwiseFST),vegdist(euclideans),
                       permutations = 10000,na.rm = TRUE)
   ```
   
