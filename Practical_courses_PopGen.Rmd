@@ -165,11 +165,45 @@ dim(freq[freq$pcadapt_qval<0.1 & freq$LK_qval<0.1,])
  
  # Reference-free approach and metavariant species
  
+  ```{r }
+  
+ MVS.List = readMvsList("data/MVS")
+  
+  ```
  ## Genomic differentiation of MVS
+ 
+   ```{r }
+  
+  plotFST(MVS.List[[i]]@pwFst)
+  
+  ```
  
  ## Role of the environmental factors
  
+  ```{r }
+EnvTable = read.table("data/WorldOceanAtlas_data.txt",header = T)
+envlist = list(Temperature = EnvTable[,c(1,7)],
+             Salinity = EnvTable[,c(1,8)],
+             Silicate = EnvTable[,c(1,4)],
+             Po4 = EnvTable[,c(1,6)], 
+             No3 = EnvTable[,c(1,5)])
+
+LagrangianMatrix = read.table("data/Lagrangian_Matrix.txt",header = T)
+ggplot(data = melt(as.matrix(LagrangianMatrix)), aes(Var1,Var2, fill = value)) + 
+  geom_tile(color = "white",names ="Travel Time (days)") + scale_fill_viridis() + 
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(angle=90,vjust = 0.8 ), 
+        axis.text.y = element_text(vjust = 0.8 )) +
+  xlab("") + ylab("")
+ 
+  ```
+  
  ## Variance partitioning of environmental factors
+ 
+   ```{r}
+   
+VariancePartition.Res = LinearMixedModelMVS(MVS.List[["Copepod"]],LagrangianMatrix,envlist)
+PlotLMM(VariancePartition.Res) 
 
-
-
+  ```
