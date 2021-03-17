@@ -1,0 +1,22 @@
+   1063 
+     17 Cyclopoida
+     16 Oithonidae
+     13 Maxillopoda
+      5 Eukaryota
+      3 Insecta
+      3 Neocopepoda
+      3 Oithona
+      3 Pancrustacea
+      2 Bilateria
+      2 Calanoida
+      2 Protostomia
+      1 Actinobacteria
+      1 Alveolata
+      1 Chordata
+      1 Dinophyceae
+      1 Euteleostomi
+      1 Eutheria
+      1 Gastropoda
+      1 Neoptera
+      1 NULL
+      1 root
