@@ -21,12 +21,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
  poplist = c("155","158","178","206","208","209","210")
 
- hist(Osimilis_raw$GA155 + Osimilis_raw$GB155,breaks = 100)
+ hist(data$GA155 + data$GB155,breaks = 100)
 
  data = FilteringCov(data,poplist,dev=2, minCov=5, maxCov = 150)
- data = FilteringFreqExpression(data_filtered,poplist,GAF=0.1, TAF=0.05)
+ head(data)
+ data = FilteringFreqExpression(data,poplist,GAF=0.1, TAF=0.05)
   
-  hist(Osimilis_raw$GA155 + Osimilis_raw$GB155,breaks = 100)
+  hist(data$GA155 + data$GB155,breaks = 100)
  ```
   #   Estimation of the genomic differentiation
   ##    Allele frequency spectrum
@@ -39,20 +40,19 @@ knitr::opts_chunk$set(echo = TRUE)
  
  ##  Pairwise-FST
  
- ```{r }
+```{r}
 source ("popgene_functions.R")  
  
 freq = CreateFreqMatrix(data,poplist) 
 
 colnames(freq) = c("TARA_155","TARA_158","TARA_178","TARA_206","TARA_208","TARA_209","TARA_210")   
 
-
 pairwiseFST = pwFst(freq)  
 
 print(pairwiseFST)  
  
 plotFST(pairwiseFST)  
- ```
+```
  
  ## Isolation by distances
  
@@ -86,7 +86,7 @@ print(res_mantel_lagrangians)
  
  ## The LK outliers method 
  
-  ```{r }
+```{r }
 source ("popgene_functions.R")  
  
 freq = CreateFreqMatrix(data,poplist) 
@@ -112,13 +112,13 @@ curve ( dchisq( x, n_pop ) , lwd=3, col="orange" , add=T )
 selection_LK = LK[LK$q_value<0.1,]  
 
 dim(selection_LK)  
- ```
+```
  
  ## using the pcadapt package
- ```{r}
+```{r}
 library(pcadapt)
  
-freq = as.data.frame(CreateFreqMatrix(Osimilis_Analysis,poplist)) 
+freq = as.data.frame(CreateFreqMatrix(data,poplist)) 
 
 colnames(freq) = c("TARA_155","TARA_158","TARA_178","TARA_206","TARA_208","TARA_209","TARA_210")   
 
@@ -127,7 +127,9 @@ freq_forPCA = read.pcadapt(t(freq), type = "pool")
 pcadapt_result <- pcadapt(freq_forPCA)
 
 plot(pcadapt_result, option = "scores", pop = colnames(freq))
+
 plot(pcadapt_result, option = "screeplot")
+
 plot(pcadapt_result, option = "qqplot")
 
 q_values = p.adjust(pcadapt_result$pvalues, method = "BH")
@@ -142,13 +144,13 @@ freq$LK_qval = LK$q_value
 
 dim(freq[freq$pcadapt_qval<0.1 & freq$LK_qval<0.1,])
 
- ```
+```
  
  # Population-scale allele expression  
  
  ## Comparison of allele expression to genomic abundance
  
-  ```{r }
+```{r }
 
  Gfreq = data$GB206/(data$GA206+data$GB206)  
  
@@ -157,24 +159,27 @@ dim(freq[freq$pcadapt_qval<0.1 & freq$LK_qval<0.1,])
  plot(Gfreq,Tfreq)  
  
  summary(lm(Tfreq~Gfreq-1))  
- ```
+```
  
  ## Detection of allele-specific expression (ASE)
  ## Example with TARA_206
- ```{r}
+```{r}
  
 ASE_206 = data[,c("GA206","GB206","TA206","TB206")]
+
 ASE_206 = ASE_206[ASE_206[,1] >= 1 & ASE_206[,2] >= 1,]
 
 Fisher_pvalue = apply(ASE_206,1,function (x) fisher.test (matrix(x, nrow = 2))$p.value) 
+
 Fisher_qvalue = p.adjust(Fisher_pvalue, method="BH")  
  
+ASE_206$Fisher_qvalue = Fisher_qvalue
 
- ```
+```
  
  ## Link between natural selection and allele specific expression
  
-  ```{r}
+```{r}
 
 selection_ASE_S206 = intersect(rownames(freq[freq$pcadapt_qval<0.05,]),
                         rownames(ASE_206[ASE_206$Fisher_qvalue < 0.05,])) 
@@ -185,26 +190,26 @@ phyper(length(selection_ASE_S206),
        length(Fisher_qvalue[Fisher_qvalue<0.05]),
        lower.tail = F)  
   
- ```
+```
  
  # Reference-free approach and metavariant species
  
-  ```{r }
+```{r }
   
- MVS.List = readMvsList("data/MVS")
+ MVS = readMvs("data/MVS/Ciliophora/")
   
-  ```
+```
  ## Genomic differentiation of MVS
  
-   ```{r }
+```{r }
   
-  plotFST(MVS.List[[i]]@pwFst)
+  plotFST(pairwiseFST = MVS@pwFst)
   
-  ```
+```
  
  ## Role of the environmental factors
  
-  ```{r }
+```{r }
 EnvTable = read.table("data/WorldOceanAtlas_data.txt",header = T)
 envlist = list(Temperature = EnvTable[,c(1,7)],
              Salinity = EnvTable[,c(1,8)],
@@ -222,14 +227,14 @@ ggplot(data = melt(as.matrix(LagrangianMatrix)), aes(Var1,Var2, fill = value)) +
         axis.text.y = element_text(vjust = 0.8 )) +
   xlab("") + ylab("")
  
-  ```
+```
   
  ## Variance partitioning of environmental factors
- 
-   ```{r}
+  
+```{r}
    
 VariancePartition.Res = LinearMixedModelMVS(MVS.List[["Copepod"]],LagrangianMatrix,envlist)
 
 PlotLMM(VariancePartition.Res) 
 
-  ```
+```

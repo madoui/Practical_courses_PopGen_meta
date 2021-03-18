@@ -163,8 +163,9 @@ get_lower_tri<-function(m){
   return(m)
 }
 
-plotFST<-function(pairewiseFST){
-  fstTable = data.frame( t(combn(names(get_lower_tri(pairwiseFST)),2)), fst=t(pairwiseFST)[lower.tri(pairwiseFST)] )
+plotFST<-function(pairwiseFST){
+  fstTable = data.frame( t(combn(names(get_lower_tri(pairwiseFST)),2)), 
+                         fst=t(pairwiseFST)[lower.tri(pairwiseFST)] )
   colnames(fstTable) = c("Population1", "Population2", "Fst")
   Fst<-c();c<-NULL
   p = ggplot(data = fstTable, aes_(x=~Population1, y=~Population2, fill = ~Fst))+
@@ -172,7 +173,7 @@ plotFST<-function(pairewiseFST){
     geom_text(aes(label = round(Fst, 2)))+
     scale_fill_gradient2(low = "white", high = "darkred", midpoint = 0, limit = c(0,1)) +
     theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                       panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
     coord_fixed()
   plot(p)
 }
