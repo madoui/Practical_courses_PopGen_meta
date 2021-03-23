@@ -25,7 +25,7 @@ CreateFreqMatrix <- function(d,poplist) {
     matrixf[,n] = x[,2]/(x[,1]+x[,2])
   }
   colnames(matrixf) = poplist
-  rownames(matrixf) = d[,1]
+  rownames(matrixf) = rownames(d)
   return(as.matrix(matrixf))
 }
 CreateExpressionMatrix <- function(d,poplist) {
@@ -40,7 +40,7 @@ CreateExpressionMatrix <- function(d,poplist) {
   rownames(matrixf) = d[,1]
   return(as.matrix(matrixf))
 }
-FilteringCov <- function(d,poplist,dev=2, minCov=5, maxCov = 150) {
+FilteringCov <- function(MainData,poplist,dev=2, minCov=5, maxCov = 150) {
   CreateCovMatrix <- function(d,poplist) {
     matrixcov = matrix(0,nrow = nrow(d),ncol = length(poplist))
     n = 0
@@ -51,7 +51,7 @@ FilteringCov <- function(d,poplist,dev=2, minCov=5, maxCov = 150) {
       
     }
     colnames(matrixcov) = paste("p",poplist,sep="")
-    rownames(matrixcov) = d[,1]
+    rownames(matrixcov) = rownames(d)
     return(as.matrix(matrixcov))
   }
   subsetCov2 <- function  (cov , dev = 2, minCov = 4, maxCov = 150){
@@ -73,17 +73,17 @@ FilteringCov <- function(d,poplist,dev=2, minCov=5, maxCov = 150) {
     cov = cov[ ok == 1, ]
     return (cov)
   }
-  MatrixCov = CreateCovMatrix(d,poplist)
+  MatrixCov = CreateCovMatrix(MainData,poplist)
   New = subsetCov2(MatrixCov,dev,minCov,maxCov)
-  data = d[d[,1] %in% rownames(New),]
+  data = MainData[rownames(MainData) %in% rownames(New),]
   return(data)
 }
 FilteringFreqExpression <- function(d, poplist,GAF=0.1, TAF=0.05) {
   
   #Filtre >GAF/TAF dans au moins une station
   MinAF <- function(matrix,df,minAF=0.1) {
-    test = matrix(0, nrow=length(df[,1]),ncol=length(colnames(matrix)))
-    rownames(test)= df[,1]
+    test = matrix(0, nrow=length(rownames(df)),ncol=length(colnames(matrix)))
+    rownames(test)= rownames(df)
     for (i in 1:length(colnames(matrix))) {
       for (j in 1:nrow(matrix)) {
         
@@ -95,10 +95,10 @@ FilteringFreqExpression <- function(d, poplist,GAF=0.1, TAF=0.05) {
         }
       }}
     
-    c = data.frame(df[,1],apply(test,1,sum))
+    c = data.frame(rownames(df),apply(test,1,sum))
     c_ok = c[c[,2] !=0,]
     
-    data = df[df[,1] %in% c_ok[,1],]
+    data = df[rownames(df) %in% c_ok[,1],]
     return(data)
   }
   fmatrix= CreateFreqMatrix(d,poplist)
@@ -114,6 +114,7 @@ FilteringFreqExpression <- function(d, poplist,GAF=0.1, TAF=0.05) {
   print(nrow(w))
   return(w)
 }
+
 
 fst <- function (p) {
   varID = rownames(p)

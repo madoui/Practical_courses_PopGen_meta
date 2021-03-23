@@ -14,29 +14,29 @@ knitr::opts_chunk$set(echo = TRUE)
   
   # Load read counts file, filtering
   
-   ```{r }
+```{r }
   source ("popgene_functions.R")  
   
  data=read.table('data/RC/OsimilisRC.txt',row.names = 1) 
 
  poplist = c("155","158","178","206","208","209","210")
 
- hist(data$GA155 + data$GB155,breaks = 100)
+ hist(data$GA206 + data$GB206,breaks = 100)
 
  data = FilteringCov(data,poplist,dev=2, minCov=5, maxCov = 150)
  head(data)
  data = FilteringFreqExpression(data,poplist,GAF=0.1, TAF=0.05)
   
-  hist(data$GA155 + data$GB155,breaks = 100)
- ```
+  hist(data$GA206 + data$GB206,breaks = 100)
+```
   #   Estimation of the genomic differentiation
   ##    Allele frequency spectrum
 
- ```{r }
- Gfreq = data$GB158/(data$GA158+data$GB158)  
+```{r }
+ Gfreq = data$GB206/(data$GA206+data$GB206)  
  
  hist(Gfreq, breaks = 10, main="B allele frequency distribution")  
- ```
+```
  
  ##  Pairwise-FST
  
@@ -57,15 +57,14 @@ plotFST(pairwiseFST)
  ## Isolation by distances
  
 ```{r}
-source ("popgene_functions.R") 
 
 euclideans = read.table("data/Euclidean_Arctic.txt", row.names=1,header = TRUE)
  
 MantelPlot(euclideans,pairwiseFST)
  
-res_mantel_euclideans = mantel(vegdist(pairwiseFST),vegdist(euclideans))
+mantel.euclideans = mantel(vegdist(pairwiseFST),vegdist(euclideans))
 
-print(res_mantel_euclideans)
+print(mantel.euclideans)
 ```
 
 ## Isolation by currents
@@ -75,9 +74,9 @@ lagrangians = read.table("data/Lagrangian_Arctic.txt", row.names=1,header = TRUE
  
 MantelPlot(euclideans,pairwiseFST)
  
-res_mantel_lagrangians = mantel(vegdist(pairwiseFST),vegdist(lagrangians))
+mantel.lagrangians = mantel(vegdist(pairwiseFST),vegdist(lagrangians))
 
-print(res_mantel_lagrangians)
+print(mantel.lagrangians)
 
 
 ```
@@ -87,8 +86,7 @@ print(res_mantel_lagrangians)
  ## The LK outliers method 
  
 ```{r }
-source ("popgene_functions.R")  
- 
+
 freq = CreateFreqMatrix(data,poplist) 
 
 colnames(freq) = c("TARA_155","TARA_158","TARA_178","TARA_206","TARA_208","TARA_209","TARA_210")  
@@ -175,6 +173,8 @@ Fisher_qvalue = p.adjust(Fisher_pvalue, method="BH")
  
 ASE_206$Fisher_qvalue = Fisher_qvalue
 
+dim(ASE_206[ASE_206$Fisher_qvalue<0.05,])
+
 ```
  
  ## Link between natural selection and allele specific expression
@@ -233,7 +233,7 @@ ggplot(data = melt(as.matrix(LagrangianMatrix)), aes(Var1,Var2, fill = value)) +
   
 ```{r}
    
-VariancePartition.Res = LinearMixedModelMVS(MVS.List[["Copepod"]],LagrangianMatrix,envlist)
+VariancePartition.Res = LinearMixedModelMVS(MVS,LagrangianMatrix,envlist)
 
 PlotLMM(VariancePartition.Res) 
 
