@@ -24,10 +24,19 @@ knitr::opts_chunk$set(echo = TRUE)
  hist(data$GA206 + data$GB206,breaks = 100)
 
  data = FilteringCov(data,poplist,dev=2, minCov=5, maxCov = 150)
- head(data)
+ 
+ hist(data$GA206 + data$GB206,breaks = 100)
+ # Create an allele frequency matrix
+    
+freq = CreateFreqMatrix(data,poplist)
+
+# Example of two loci with unwanted frequencies
+barplot(freq["13564462",],ylim=c(0,1))
+barplot(freq["10789206",],ylim=c(0,1))
+ 
  data = FilteringFreqExpression(data,poplist,GAF=0.1, TAF=0.05)
   
-  hist(data$GA206 + data$GB206,breaks = 100)
+  
 ```
   #   Estimation of the genomic differentiation
   ##    Allele frequency spectrum
