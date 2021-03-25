@@ -202,7 +202,7 @@ MantelPlot <- function(EnvMatrix,FstMatrix)  {
   diag(EnvMatrix) = NA
   Env_Distance = na.omit(melt(get_lower_tri(as.matrix(EnvMatrix))))
   
-  res.mantel = mantel(vegdist(FstMatrix),vegdist(EnvMatrix),
+  res.mantel = mantel(vegdist(FstMatrix,na.rm = T),vegdist(EnvMatrix,na.rm = T),
                       permutations = 10000,na.rm = TRUE)
   
   
@@ -225,7 +225,7 @@ MantelPlot <- function(EnvMatrix,FstMatrix)  {
              , plot.title = element_text(hjust = 0.5)) +
            labs(title = "Bivariate plot of Median-Pairwise Fst vs distance",
                 subtitle = paste(paste("Mantel r statistic = ",round(res.mantel$statistic,digits=2),sep=""),
-                                 paste("pvalue = ",formatC(res.mantel$signif,format = "e",digits=2),sep=""),sep="\n")))
+            paste("pvalue = ",formatC(res.mantel$signif,format = "e",digits=2),sep=""),sep="\n")))
 }
 
 # MVS functions ; variation partitioning and plotting

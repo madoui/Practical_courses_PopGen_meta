@@ -71,7 +71,7 @@ euclideans = read.table("data/Euclidean_Arctic.txt", row.names=1,header = TRUE)
  
 MantelPlot(euclideans,pairwiseFST)
  
-mantel.euclideans = mantel(vegdist(pairwiseFST),vegdist(euclideans))
+mantel.euclideans = mantel(vegdist(pairwiseFST,na.rm = T),vegdist(euclideans,na.rm = T))
 
 print(mantel.euclideans)
 ```
@@ -81,9 +81,9 @@ print(mantel.euclideans)
 ```{r }
 lagrangians = read.table("data/Lagrangian_Arctic.txt", row.names=1,header = TRUE)
  
-MantelPlot(euclideans,pairwiseFST)
+MantelPlot(lagrangians,pairwiseFST)
  
-mantel.lagrangians = mantel(vegdist(pairwiseFST),vegdist(lagrangians))
+mantel.lagrangians = mantel(vegdist(pairwiseFST,na.rm = T),vegdist(lagrangians,na.rm = T))
 
 print(mantel.lagrangians)
 
