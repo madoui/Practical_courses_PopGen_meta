@@ -230,7 +230,7 @@ MantelPlot <- function(EnvMatrix,FstMatrix)  {
 
 # MVS functions ; variation partitioning and plotting
 
-LinearMixedModelMVS = function(MVS,LagMatrix,EnvList) {
+LinearMixedModelMVS = function(pwFst,LagMatrix,EnvList) {
   get_lower_tri<-function(cormat){
     cormat[upper.tri(cormat)] <- NA
     return(cormat)
@@ -241,11 +241,9 @@ LinearMixedModelMVS = function(MVS,LagMatrix,EnvList) {
   }
   Results = list()
   
-  Fst_matrix = MVS@pwFst
-  subpoplist = MVS@pop
-  MVSname = MVS@name
-  print(MVSname)
-  
+  Fst_matrix = pwFst
+  subpoplist = colnames(pwFst)
+
   diag.boolean<-FALSE
   EnvList2 = list()
   for (env in 1:length(EnvList)) {
@@ -262,7 +260,7 @@ LinearMixedModelMVS = function(MVS,LagMatrix,EnvList) {
   
   Y<-Fst_matrix[upper.tri(Fst_matrix,diag=diag.boolean)]
   X.lagrangian<-c(LagMatrix[subpoplist,subpoplist][upper.tri(LagMatrix[subpoplist,
-                                                                       subpoplist],diag=diag.boolean)])
+                     subpoplist],diag=diag.boolean)])
   
   X = as.data.frame(matrix(ncol=length(EnvList2)+2,nrow=length(Y),0))
   X[,1] = Y
@@ -302,7 +300,7 @@ LinearMixedModelMVS = function(MVS,LagMatrix,EnvList) {
   table2 = MM.table
   #knitr::kable(MM.table)
   
-  Results = list(MVSname = paste(MVSname,sep="_"), Model = Model, Data = X, 
+  Results = list(Model = Model, Data = X, 
                  MME=table2,TotalVariance = TotalVariance)
   print(table2)
   return(Results) 

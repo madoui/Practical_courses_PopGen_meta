@@ -104,13 +104,11 @@ LK = LK(freq)
 
 head( LK)  
 
-h = hist ( LK$LK , plot = F, breaks = 50 )  
-
-n_pop = ncol(freq)-1  
-
 hist ( LK$LK, freq = F, xlab = "LK" , breaks = 50 , main = "LK distribution")  
 
 # add the neutral evolution  
+
+n_pop = ncol(freq)-1  
 
 curve ( dchisq( x, n_pop ) , lwd=3, col="orange" , add=T )  
 
@@ -205,14 +203,14 @@ phyper(length(selection_ASE_S206),
  
 ```{r }
   
- MVS = readMvs("data/MVS/Ciliophora/")
+ MVS.pwFst = read.table("data/MVS/Ciliophora/pwFst.txt",row.names = 1,header=T)
   
 ```
  ## Genomic differentiation of MVS
  
 ```{r }
   
-  plotFST(pairwiseFST = MVS@pwFst)
+  plotFST(pairwiseFST = MVS.pwFst)
   
 ```
  
@@ -242,7 +240,7 @@ ggplot(data = melt(as.matrix(LagrangianMatrix)), aes(Var1,Var2, fill = value)) +
   
 ```{r}
    
-VariancePartition.Res = LinearMixedModelMVS(MVS,LagrangianMatrix,envlist)
+VariancePartition.Res = LinearMixedModelMVS(MVS.pwFst,LagrangianMatrix,envlist)
 
 PlotLMM(VariancePartition.Res) 
 
